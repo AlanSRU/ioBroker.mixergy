@@ -1,0 +1,13 @@
+{
+    "Account email": "E-Mail-Adresse des Kontos",
+    "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.": "Fügt im Sekundentakt Temperaturen, Spannung, Strom und Netzfrequenz vom Tank über das lokale Netzwerk hinzu. Schreibgeschützt.",
+    "Between 30 and 300 seconds": "Zwischen 30 und 300 Sekunden",
+    "Controller IP address": "IP-Adresse des Controllers",
+    "Local controller (optional)": "Lokaler Controller (optional)",
+    "Mixergy account": "Mixergy-Konto",
+    "Only needed if the account has several tanks, or if no account is entered": "Wird nur benötigt, wenn das Konto mehrere Tanks hat oder kein Konto eingetragen ist",
+    "Password": "Passwort",
+    "Poll interval (seconds)": "Abfrageintervall (Sekunden)",
+    "Read the tank's local controller": "Lokalen Controller des Speichers auslesen",
+    "Tank serial number": "Seriennummer des Speichers"
+}

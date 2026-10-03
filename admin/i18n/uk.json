@@ -1,0 +1,13 @@
+{
+    "Account email": "Електронна адреса облікового запису",
+    "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.": "Додає субсекундні температури, напругу, струм і частоту мережі з бака через локальну мережу. Тільки для читання.",
+    "Between 30 and 300 seconds": "Від 30 до 300 секунд",
+    "Controller IP address": "IP-адреса контролера",
+    "Local controller (optional)": "Локальний контролер (опціонально)",
+    "Mixergy account": "Аккаунт Mixergy",
+    "Only needed if the account has several tanks, or if no account is entered": "Потрібен, лише якщо обліковий запис має кілька баків або якщо обліковий запис не введено",
+    "Password": "Пароль",
+    "Poll interval (seconds)": "Інтервал опитування (секунди)",
+    "Read the tank's local controller": "Зчитувати дані з локального контролера бака",
+    "Tank serial number": "Серійний номер бака"
+}

@@ -1,0 +1,138 @@
+{
+    "common": {
+        "name": "mixergy",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "Mixergy",
+            "de": "Mixergy",
+            "ru": "Mixergy",
+            "pt": "Mixergy",
+            "nl": "Mixergy",
+            "fr": "Mixergy",
+            "it": "Mixergy",
+            "es": "Mixergy",
+            "pl": "Mixergy",
+            "uk": "Mixergy",
+            "zh-cn": "Mixergy"
+        },
+        "desc": {
+            "en": "Monitor and control Mixergy smart hot water tanks via the Mixergy cloud API, with optional sub-second readings from the tank's local controller.",
+            "de": "Überwachen und steuern Sie die intelligenten Warmwasserspeicher von Mixergy über die Mixergy-Cloud-API, mit optionalen Messwerten im Subsekundenbereich von der lokalen Steuerung des Speichers.",
+            "ru": "Мониторинг и управление интеллектуальными резервуарами для горячей воды Mixergy через облачный API Mixergy с дополнительными показаниями с точностью до секунды от локального контроллера резервуара.",
+            "pt": "Monitore e controle os tanques de água quente inteligentes Mixergy por meio da API da nuvem Mixergy, com leituras opcionais de subsegundos do controlador local do tanque.",
+            "nl": "Bewaak en bestuur de slimme warmwatertanks van Mixergy via de Mixergy cloud API, met optionele metingen in minder dan een seconde van de lokale controller van de tank.",
+            "fr": "Surveillez et contrôlez les réservoirs d'eau chaude intelligents Mixergy via l'API cloud Mixergy, avec des lectures inférieures à la seconde en option à partir du contrôleur local du réservoir.",
+            "it": "Monitora e controlla i serbatoi di acqua calda intelligenti Mixergy tramite l'API cloud Mixergy, con letture inferiori al secondo opzionali dal controller locale del serbatoio.",
+            "es": "Supervise y controle los tanques de agua caliente inteligentes de Mixergy a través de la API en la nube de Mixergy, con lecturas opcionales de menos de un segundo desde el controlador local del tanque.",
+            "pl": "Monitoruj i kontroluj inteligentne zbiorniki ciepłej wody Mixergy poprzez API chmury Mixergy, z opcjonalnymi odczytami w czasie krótszym niż sekunda z lokalnego sterownika zbiornika.",
+            "uk": "Відстежуйте та керуйте розумними резервуарами для гарячої води Mixergy через хмарний API Mixergy з додатковими субсекундними показаннями з локального контролера бака.",
+            "zh-cn": "通过 Mixergy 云 API 监视和控制 Mixergy 智能热水箱，并可选择来自水箱本地控制器的亚秒级读数。"
+        },
+        "authors": [
+            "Alan Paris <alan.paris@scottish.rugby>"
+        ],
+        "keywords": [
+            "mixergy",
+            "hot water",
+            "tank",
+            "cylinder",
+            "energy"
+        ],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "mixergy.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/AlanSRU/ioBroker.mixergy/main/admin/mixergy.png",
+        "readme": "https://github.com/AlanSRU/ioBroker.mixergy/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "climate-control",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=6.0.11"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.6.20"
+            }
+        ]
+    },
+    "native": {
+        "username": "",
+        "password": "",
+        "pollInterval": 60,
+        "enableLocal": false,
+        "localHost": "",
+        "localSerial": ""
+    },
+    "protectedNative": [
+        "username",
+        "password",
+        "localSerial"
+    ],
+    "encryptedNative": [
+        "password"
+    ],
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Connected to the Mixergy cloud",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.lastUpdate",
+            "type": "state",
+            "common": {
+                "role": "date",
+                "name": "Last successful cloud poll",
+                "type": "number",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        }
+    ]
+}

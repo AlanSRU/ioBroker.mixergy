@@ -1,0 +1,13 @@
+{
+    "Mixergy account": "Mixergy account",
+    "Account email": "Account email",
+    "Password": "Password",
+    "Poll interval (seconds)": "Poll interval (seconds)",
+    "Between 30 and 300 seconds": "Between 30 and 300 seconds",
+    "Local controller (optional)": "Local controller (optional)",
+    "Read the tank's local controller": "Read the tank's local controller",
+    "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.": "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.",
+    "Controller IP address": "Controller IP address",
+    "Tank serial number": "Tank serial number",
+    "Only needed if the account has several tanks, or if no account is entered": "Only needed if the account has several tanks, or if no account is entered"
+}

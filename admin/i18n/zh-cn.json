@@ -1,0 +1,13 @@
+{
+    "Account email": "账户邮箱",
+    "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.": "通过本地网络添加来自储罐的亚秒级温度、电压、电流和电网频率。只读。",
+    "Between 30 and 300 seconds": "30 至 300 秒之间",
+    "Controller IP address": "控制器IP地址",
+    "Local controller (optional)": "本地控制器（可选）",
+    "Mixergy account": "混合动力帐户",
+    "Only needed if the account has several tanks, or if no account is entered": "仅当帐户有多个储罐或未输入帐户时才需要",
+    "Password": "密码",
+    "Poll interval (seconds)": "轮询间隔（秒）",
+    "Read the tank's local controller": "读取储罐的本地控制器",
+    "Tank serial number": "储罐序列号"
+}

@@ -1,0 +1,48 @@
+{
+    "cli": true,
+    "target": "directory",
+    "adapterName": "mixergy",
+    "title": "Mixergy",
+    "description": "Monitor and control Mixergy smart hot water tanks via the Mixergy cloud API, with optional sub-second readings from the tank's local controller.",
+    "keywords": [
+        "mixergy",
+        "hot water",
+        "tank",
+        "cylinder",
+        "energy"
+    ],
+    "contributors": [],
+    "expert": "yes",
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "climate-control",
+    "startMode": "daemon",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "connectionIndicator": "yes",
+    "language": "TypeScript",
+    "nodeVersion": "20",
+    "adminUi": "json",
+    "tools": [
+        "ESLint",
+        "type checking",
+        "Prettier"
+    ],
+    "eslintConfig": "official",
+    "i18n": "JSON",
+    "releaseScript": "yes",
+    "devServer": "no",
+    "indentation": "Space (4)",
+    "quotes": "single",
+    "gitRemoteProtocol": "HTTPS",
+    "gitCommit": "no",
+    "defaultBranch": "main",
+    "authorName": "Alan Paris",
+    "authorEmail": "alan.paris@scottish.rugby",
+    "authorGithub": "AlanSRU",
+    "license": "MIT License",
+    "dependabot": "no",
+    "creatorVersion": "3.1.5"
+}

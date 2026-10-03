@@ -1,0 +1,81 @@
+{
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "accountHeader": {
+            "type": "header",
+            "text": "Mixergy account",
+            "size": 2
+        },
+        "username": {
+            "type": "text",
+            "label": "Account email",
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+        },
+        "password": {
+            "type": "password",
+            "label": "Password",
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+        },
+        "pollInterval": {
+            "type": "number",
+            "label": "Poll interval (seconds)",
+            "help": "Between 30 and 300 seconds",
+            "min": 30,
+            "max": 300,
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+        },
+        "localHeader": {
+            "type": "header",
+            "text": "Local controller (optional)",
+            "size": 2
+        },
+        "enableLocal": {
+            "type": "checkbox",
+            "label": "Read the tank's local controller",
+            "help": "Adds sub-second temperatures, voltage, current and grid frequency from the tank over the local network. Read-only.",
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "localHost": {
+            "type": "text",
+            "label": "Controller IP address",
+            "hidden": "!data.enableLocal",
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+        },
+        "localSerial": {
+            "type": "text",
+            "label": "Tank serial number",
+            "help": "Only needed if the account has several tanks, or if no account is entered",
+            "hidden": "!data.enableLocal",
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+        }
+    }
+}

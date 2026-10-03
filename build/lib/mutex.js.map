@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/mutex.ts"],
+  "sourcesContent": ["/** Runs async sections one at a time, in call order. */\nexport class Mutex {\n    private tail: Promise<void> = Promise.resolve();\n\n    /**\n     * Runs `fn` once every previously queued section has finished.\n     *\n     * @param fn - the critical section\n     */\n    public async run<T>(fn: () => Promise<T>): Promise<T> {\n        const previous = this.tail;\n        let release!: () => void;\n        this.tail = new Promise<void>(resolve => (release = resolve));\n        await previous;\n        try {\n            return await fn();\n        } finally {\n            release();\n        }\n    }\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AACO,MAAM,MAAM;AAAA,EACP,OAAsB,QAAQ,QAAQ;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,EAO9C,MAAa,IAAO,IAAkC;AAClD,UAAM,WAAW,KAAK;AACtB,QAAI;AACJ,SAAK,OAAO,IAAI,QAAc,aAAY,UAAU,OAAQ;AAC5D,UAAM;AACN,QAAI;AACA,aAAO,MAAM,GAAG;AAAA,IACpB,UAAE;AACE,cAAQ;AAAA,IACZ;AAAA,EACJ;AACJ;",
+  "names": []
+}
