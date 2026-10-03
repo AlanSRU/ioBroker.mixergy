@@ -93,8 +93,7 @@
     },
     "protectedNative": [
         "username",
-        "password",
-        "localSerial"
+        "password"
     ],
     "encryptedNative": [
         "password"
@@ -114,7 +113,7 @@
             "type": "state",
             "common": {
                 "role": "indicator.connected",
-                "name": "Connected to the Mixergy cloud",
+                "name": "Connected to the tank data source",
                 "type": "boolean",
                 "read": true,
                 "write": false,

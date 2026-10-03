@@ -39,7 +39,11 @@ const STATUS_TIMEOUT_MS = 5e3;
 const HOST_PATTERN = /^[a-zA-Z0-9.-]+(?::\d{1,5})?$/;
 function parseLocalHost(value) {
   const host = value.trim();
-  return HOST_PATTERN.test(host) ? host : null;
+  if (!HOST_PATTERN.test(host)) {
+    return null;
+  }
+  const port = host.split(":")[1];
+  return port === void 0 || Number(port) >= 1 && Number(port) <= 65535 ? host : null;
 }
 async function fetchLocalStatus(host) {
   const res = await fetch(`http://${host}/status`, {

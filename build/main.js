@@ -50,6 +50,10 @@ class Mixergy extends utils.Adapter {
   warned = /* @__PURE__ */ new Set();
   /** Set first thing in onUnload, so in-flight work stops before writing or opening resources. */
   unloaded = false;
+  /** After a rejected login, no login is tried before this time, so the account isn't locked. */
+  authBlockedUntil = 0;
+  /** Holiday date states written by the user and waiting for the other date. */
+  holidayPending = /* @__PURE__ */ new Set();
   localHost = null;
   localTankId = null;
   localStream = null;
@@ -71,12 +75,16 @@ class Mixergy extends utils.Adapter {
   async onReady() {
     var _a;
     await this.setState("info.connection", false, true);
+    const localConnected = await this.getStatesAsync("*.local.connected");
+    for (const [id, state] of Object.entries(localConnected != null ? localConnected : {})) {
+      if (state == null ? void 0 : state.val) {
+        await this.setState(id, false, true);
+      }
+    }
     this.pollIntervalMs = ((_a = (0, import_parse.toClampedNumber)(this.config.pollInterval, POLL_MIN_S, POLL_MAX_S)) != null ? _a : POLL_DEFAULT_S) * 1e3;
     const username = this.config.username.trim();
     if (username && this.config.password) {
       this.cloud = new import_cloud.MixergyCloud({ username, password: this.config.password });
-    } else {
-      this.log.error("Enter your Mixergy account email and password in the instance settings.");
     }
     const localSerial = this.config.localSerial.trim().toUpperCase();
     if (this.config.enableLocal) {
@@ -85,8 +93,15 @@ class Mixergy extends utils.Adapter {
         this.log.error(
           `Local controller address "${this.config.localHost}" is not a valid IP address or hostname.`
         );
-      } else if (!this.cloud && !localSerial) {
+      }
+    }
+    if (!this.cloud) {
+      if (this.localHost && localSerial) {
+        this.log.info("No Mixergy account entered: reading the local controller only, changes are disabled.");
+      } else if (this.localHost) {
         this.log.error("Without a Mixergy account, enter the tank serial number for the local controller.");
+      } else {
+        this.log.error("Enter your Mixergy account email and password in the instance settings.");
       }
     }
     this.subscribeStates("*.control.*");
@@ -152,6 +167,7 @@ class Mixergy extends utils.Adapter {
     } catch (err) {
       if (err instanceof import_cloud.MixergyAuthError) {
         delay = Math.max(delay, AUTH_RETRY_MS);
+        this.authBlockedUntil = Date.now() + AUTH_RETRY_MS;
       }
       await this.cloudFailed(err);
     } finally {
@@ -260,6 +276,8 @@ class Mixergy extends utils.Adapter {
   }
   async cloudSucceeded() {
     this.cloudFailures = 0;
+    this.authBlockedUntil = 0;
+    this.clearWarning("auth-write");
     if (this.clearWarning("cloud")) {
       this.log.info("Mixergy cloud reachable again.");
     }
@@ -300,10 +318,22 @@ class Mixergy extends utils.Adapter {
       this.log.warn(`Cannot change ${key}: changes need a Mixergy account in the instance settings.`);
       return;
     }
+    if (Date.now() < this.authBlockedUntil) {
+      this.warnOnce(
+        "auth-write",
+        `Cannot change ${key}: Mixergy rejected the account email or password. Check them in the instance settings.`
+      );
+      return;
+    }
     let wrote;
     try {
       wrote = await this.handleWrite(tank, key, state.val);
     } catch (err) {
+      if (err instanceof import_cloud.MixergyAuthError) {
+        this.authBlockedUntil = Date.now() + AUTH_RETRY_MS;
+        this.log.error(`${err.message}. Check the account email and password in the instance settings.`);
+        return;
+      }
       this.log.warn(`Changing ${key} on tank ${tank.serial} failed: ${err.message}`);
       wrote = true;
     }
@@ -375,23 +405,35 @@ class Mixergy extends utils.Adapter {
     }
   }
   /**
-   * The API takes start and end together, so a holiday is sent once both states hold valid
-   * dates. Until then the written state stays unacknowledged and polling leaves it alone.
+   * The API takes start and end together, so a holiday is sent once both states form a valid
+   * range. A date that doesn't pair with the cloud's current other date waits, unacknowledged
+   * and left alone by polling, until the user writes the other date.
    *
    * @param tank - the tank
    * @param key - schedule.holidayStart or schedule.holidayEnd
    * @param val - the requested value
    */
   async writeHoliday(tank, key, val) {
-    var _a, _b;
+    var _a;
     const isStart = key === "schedule.holidayStart";
-    const other = await this.getStateAsync(`${tank.id}.schedule.${isStart ? "holidayEnd" : "holidayStart"}`);
-    const start = Date.parse(String((_a = isStart ? val : other == null ? void 0 : other.val) != null ? _a : ""));
-    const end = Date.parse(String((_b = isStart ? other == null ? void 0 : other.val : val) != null ? _b : ""));
-    if (Number.isNaN(start) || Number.isNaN(end)) {
-      this.log.info(`Holiday for tank ${tank.serial} is sent once both start and end hold valid dates.`);
+    const ownId = `${tank.id}.${key}`;
+    const otherId = `${tank.id}.schedule.${isStart ? "holidayEnd" : "holidayStart"}`;
+    const other = await this.getStateAsync(otherId);
+    const own = Date.parse(String(val != null ? val : ""));
+    const otherDate = Date.parse(String((_a = other == null ? void 0 : other.val) != null ? _a : ""));
+    const otherPending = this.holidayPending.has(otherId);
+    if (Number.isNaN(own)) {
+      this.holidayPending.delete(ownId);
+      throw new Error(`${JSON.stringify(val)} is not a valid date`);
+    }
+    const [start, end] = isStart ? [own, otherDate] : [otherDate, own];
+    if (Number.isNaN(otherDate) || end <= start && !otherPending) {
+      this.holidayPending.add(ownId);
+      this.log.info(`Holiday for tank ${tank.serial} is sent once start and end form a valid range.`);
       return false;
     }
+    this.holidayPending.delete(ownId);
+    this.holidayPending.delete(otherId);
     if (end <= start) {
       throw new Error("holiday end must be after its start");
     }
@@ -433,6 +475,7 @@ class Mixergy extends utils.Adapter {
       return;
     }
     this.localTankId = tank.id;
+    this.writeLocal("connected", false);
     this.log.info(`Reading tank ${serial} from the local controller at ${this.localHost}.`);
     this.connectLocal();
     void this.pollLocalStatus();
@@ -450,8 +493,7 @@ class Mixergy extends utils.Adapter {
   }
   onLocalMessage(m) {
     if (!this.localUp) {
-      this.localUp = true;
-      this.writeLocal("connected", true);
+      this.setLocalUp(true);
       if (this.clearWarning("local")) {
         this.log.info("Local controller reachable again.");
       }
@@ -486,8 +528,7 @@ class Mixergy extends utils.Adapter {
       return;
     }
     if (this.localUp) {
-      this.localUp = false;
-      this.writeLocal("connected", false);
+      this.setLocalUp(false);
     }
     if (Date.now() - this.localOpenedAt >= LOCAL_STABLE_MS) {
       this.localRetryMs = LOCAL_RETRY_MIN_MS;
@@ -495,6 +536,13 @@ class Mixergy extends utils.Adapter {
     this.warnOnce("local", `Local controller at ${this.localHost} unavailable (${reason}), retrying.`);
     this.localRetryTimer = this.setTimeout(() => this.connectLocal(), this.localRetryMs);
     this.localRetryMs = Math.min(this.localRetryMs * 2, LOCAL_RETRY_MAX_MS);
+  }
+  setLocalUp(up) {
+    this.localUp = up;
+    this.writeLocal("connected", up);
+    if (!this.cloud) {
+      this.write("info.connection", up).catch((err) => this.log.debug(`Writing info.connection failed: ${err}`));
+    }
   }
   async pollLocalStatus() {
     if (this.unloaded || !this.localHost) {
@@ -542,17 +590,15 @@ class Mixergy extends utils.Adapter {
     }
   }
   /**
-   * Writes unless the user has a change waiting (ack false), e.g. half of a holiday.
+   * Writes unless the user has half of a holiday waiting for the other date.
    *
    * @param id - state id
    * @param val - the value
    */
   async writeUnlessPending(id, val) {
-    const current = await this.getStateAsync(id);
-    if (current && !current.ack) {
-      return;
+    if (!this.holidayPending.has(id)) {
+      await this.write(id, val);
     }
-    await this.write(id, val);
   }
   warnOnce(key, message) {
     if (this.warned.has(key)) {

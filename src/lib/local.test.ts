@@ -48,7 +48,16 @@ describe('parseLocalHost', () => {
     });
 
     it('rejects anything that could change the request path', () => {
-        for (const bad of ['', '192.168.1.5/disconnect', 'http://192.168.1.5', '1.2.3.4?x', 'a b', '1.2.3.4:']) {
+        for (const bad of [
+            '',
+            '192.168.1.5/disconnect',
+            'http://192.168.1.5',
+            '1.2.3.4?x',
+            'a b',
+            '1.2.3.4:',
+            '1.2.3.4:0',
+            '1.2.3.4:70000',
+        ]) {
             expect(parseLocalHost(bad)).to.equal(null);
         }
     });
